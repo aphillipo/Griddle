@@ -345,6 +345,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this.columnSettings.filteredColumns = nextProps.columns;
 	        }
 
+
 	        if (nextProps.selectedRowIds) {
 	            var visibleRows = this.getDataForRender(this.getCurrentResults(), this.columnSettings.getColumns(), true);
 
@@ -1149,7 +1150,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  _.each(obj, function (value, key) {
 	    var fullKey = prefix ? prefix + "." + key : key;
 	    if (_.isObject(value) && !_.isArray(value) && !_.isFunction(value)) {
-	      keys.push(getKeys(obj[key], fullKey));
+	      keys = keys.concat(getKeys(value, fullKey));
 	    } else {
 	      keys.push(fullKey);
 	    }
