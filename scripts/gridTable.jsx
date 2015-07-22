@@ -7,6 +7,8 @@ var GridRowContainer = require('./gridRowContainer.jsx');
 var ColumnProperties = require('./columnProperties.js');
 var RowProperties = require('./rowProperties.js');
 var _ = require('underscore');
+var deep = require('./deep.js');
+
 
 var GridTable = React.createClass({
   getDefaultProps: function(){
@@ -99,6 +101,57 @@ var GridTable = React.createClass({
   getAdjustedRowHeight: function() {
     return this.props.rowHeight + this.props.paddingHeight * 2; // account for padding.
   },
+
+  getHiddenColumns: function() {
+    this.verifyProps();
+    var that = this;
+    var columnStyles = null;
+
+    if (this.props.useGriddleStyles) {
+      columnStyles = {
+        margin: "0",
+        padding: "0 5px",
+        height: "0px",
+        backgroundColor: "#FFF"
+      };
+    }
+
+    var columns = this.props.columnSettings.getColumns();
+
+    // make sure that all the columns we need have default empty values
+    // otherwise they will get clipped
+    var defaults = _.object(columns, []);
+
+    // creates a 'view' on top the data so we will not alter the original data but will allow us to add default values to missing columns
+    var dataView = Object.create(this.props.data);
+
+    _.defaults(dataView, defaults);
+
+    var data = _.pairs(deep.pick(dataView, columns));
+
+    var nodes = data.map((col, index) => {
+        var returnValue = null;
+        var meta = this.props.columnSettings.getColumnMetadataByName(col[0]);
+
+        if(index === 0 && this.props.isChildRow && this.props.useGriddleStyles){
+          columnStyles = _.extend(columnStyles, {paddingLeft:10})
+        }
+
+        if (this.props.columnSettings.hasColumnMetadata() && typeof meta !== "undefined"){
+          returnValue = (meta == null ? returnValue : <td className={meta.cssClassName} key={index} style={columnStyles}></td>);
+        }
+
+        return returnValue || (<td onClick={this.handleClick} key={index} style={columnStyles}></td>);
+    });
+
+    nodes = nodes.unshift(<td styles={columnStyles}></td>);
+
+    console.log(nodes);
+
+    return nodes;
+  },
+
+
   getNodeContent: function() {
     this.verifyProps();
     var that = this;
@@ -116,18 +169,18 @@ var GridTable = React.createClass({
       // If we have a row height specified, only render what's going to be visible.
       if (this.props.enableInfiniteScroll && this.props.rowHeight !== null && this.refs.scrollable !== undefined) {
         var adjustedHeight = that.getAdjustedRowHeight();
-        var visibleRecordCount = Math.ceil(that.state.clientHeight / adjustedHeight);
+        var visibleRecordCount = Math.ceil(that.state.clientHeight / adjustedHeight) + 2;
 
         // Inspired by : http://jsfiddle.net/vjeux/KbWJ2/9/
         var displayStart = Math.max(0, Math.floor(that.state.scrollTop / adjustedHeight) - visibleRecordCount * 0.25);
-        var displayEnd = Math.min(displayStart + visibleRecordCount * 1.25, this.props.data.length - 1);
+        var displayEnd = Math.min(displayStart + visibleRecordCount * 1.25, this.props.data.length);
 
         // Split the amount of nodes.
-        nodeData = nodeData.slice(displayStart, displayEnd+1);
+        nodeData = nodeData.slice(displayStart, displayEnd + 1);
 
         // Set the above and below nodes.
         var aboveSpacerRowStyle = { height: (displayStart * adjustedHeight) + "px" };
-        aboveSpacerRow = (<tr key={'above-' + aboveSpacerRowStyle.height} style={aboveSpacerRowStyle}></tr>);
+        aboveSpacerRow = (<tr key={'above-' + aboveSpacerRowStyle.height} style={aboveSpacerRowStyle}>{this.getHiddenColumns()}</tr>);
         var belowSpacerRowStyle = { height: ((this.props.data.length - displayEnd) * adjustedHeight) + "px" };
         belowSpacerRow = (<tr key={'below-' + belowSpacerRowStyle.height} style={belowSpacerRowStyle}></tr>);
       }

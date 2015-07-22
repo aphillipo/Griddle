@@ -97,10 +97,23 @@ module.exports = function(grunt) {
         ]
       }
     },
+
+    "babel": {
+      options: {
+        sourceMap: false
+      },
+      compile: {
+        files: {
+          src: ["scripts/*.js*"],
+          dest: "modules/"
+        }
+      }
+    },
+
     webpack: {
       default: {
         entry: {
-          Griddle: ['./compiled/griddle.jsx'],
+          Griddle: ['./scripts/griddle.jsx'],
         },
         output: {
           path: __dirname,
@@ -114,19 +127,17 @@ module.exports = function(grunt) {
         },
         module: {
           loaders: [
-            {test: /\.jsx$/, loader: 'jsx'}
+            {test: /\.jsx?$/, exclude: '/node_modules/', loaders: ['babel?optional=runtime&stage=0']}
           ]
         },
         externals: {
-          "react": "React",
-          "underscore": "_",
-
+          "react": "React"
         }
       },
       docs: {
         entry: {
-            Griddle: ['./compiled/griddle.jsx'],
-            ChartistGraph: ['./node_modules/react-chartist/index.js']
+            Griddle: ['./scripts/griddle.jsx'],
+//            ChartistGraph: ['./node_modules/react-chartist/index.js']
         },
         output: {
           path: __dirname,
@@ -140,7 +151,7 @@ module.exports = function(grunt) {
         },
         module: {
           loaders: [
-            {test: /\.jsx$/, loader: 'jsx'}
+            {test: /\.jsx$/, exclude: '/node_modules/', loaders: ['babel?optional=runtime&stage=0']}
           ]
         },
         externals: {
@@ -148,19 +159,6 @@ module.exports = function(grunt) {
           "underscore": "_",
           "Chartist": "chartist"
         }
-      }
-    },
-    "6to5": {
-      options: {
-        sourceMap: false
-      },
-      build: {
-        files: [{
-            expand: true,
-            cwd: 'scripts/',
-            src: ['**/*.js', '**/*.jsx'],
-            dest: 'compiled/'
-          }]
       }
     },
     watch: {
@@ -181,12 +179,10 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-react');
-  grunt.loadNpmTasks('grunt-jsxhint');
   grunt.loadNpmTasks('grunt-webpack');
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-markdown');
   grunt.loadNpmTasks('grunt-include-replace');
-  grunt.loadNpmTasks('grunt-6to5'); 
 
   grunt.registerTask('serve', function (target) {
     grunt.task.run([
@@ -203,13 +199,9 @@ module.exports = function(grunt) {
       'includereplace',
       'markdown',
       'clean:includes',
-      'clean:compiled',
-      '6to5',
       'webpack:docs',
       'webpack:default',
       'copy',
-      'react',
-      'clean:compiled'
     ]);
   })
 
