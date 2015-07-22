@@ -594,7 +594,7 @@ var Griddle = React.createClass({
     getSettings: function(){
         return (this.props.showSettings ?
             <button type="button" className={this.props.settingsToggleClassName} onClick={this.toggleColumnChooser}
-                style={this.props.useGriddleStyles ? { background: "none", border: "none", padding: 0, margin: 0, fontSize: 14} : null}>
+                style={this.props.useGriddleStyles ? { background: "none",border: "none", padding: 0, margin: 0, fontSize: 14} : null}>
                     {this.props.settingsText} {this.props.settingsIconComponent}
             </button> :
             "");

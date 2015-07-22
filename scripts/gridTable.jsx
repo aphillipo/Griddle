@@ -144,13 +144,10 @@ var GridTable = React.createClass({
         return returnValue || (<td onClick={this.handleClick} key={index} style={columnStyles}></td>);
     });
 
-    nodes = nodes.unshift(<td styles={columnStyles}></td>);
-
-    console.log(nodes);
+    nodes.unshift(<td styles={columnStyles}></td>);
 
     return nodes;
   },
-
 
   getNodeContent: function() {
     this.verifyProps();
