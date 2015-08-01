@@ -130,21 +130,25 @@ var GridTable = React.createClass({
     var data = _.pairs(deep.pick(dataView, columns));
 
     var nodes = data.map((col, index) => {
-        var returnValue = null;
-        var meta = this.props.columnSettings.getColumnMetadataByName(col[0]);
+      var returnValue = null;
+      var meta = this.props.columnSettings.getColumnMetadataByName(col[0]);
 
-        if(index === 0 && this.props.isChildRow && this.props.useGriddleStyles){
-          columnStyles = _.extend(columnStyles, {paddingLeft:10})
-        }
+      if (index === 0 && this.props.isChildRow && this.props.useGriddleStyles) {
+        columnStyles = _.extend(columnStyles, {paddingLeft: 10})
+      }
 
-        if (this.props.columnSettings.hasColumnMetadata() && typeof meta !== "undefined"){
-          returnValue = (meta == null ? returnValue : <td className={meta.cssClassName} key={index} style={columnStyles}></td>);
-        }
+      if (this.props.columnSettings.hasColumnMetadata() && typeof meta !== "undefined") {
+        returnValue = (meta == null ? returnValue :
+            <td className={meta.cssClassName} key={index} style={columnStyles}></td>);
+      }
 
-        return returnValue || (<td onClick={this.handleClick} key={index} style={columnStyles}></td>);
+      return returnValue || (<td onClick={this.handleClick} key={index} style={columnStyles}></td>);
     });
 
-    nodes.unshift(<td styles={columnStyles}></td>);
+    // extra spacer col for the checkbox column.
+    if (this.props.multipleSelectionSettings.isMultipleSelection) {
+      nodes.unshift(<td styles={columnStyles}></td>);
+    }
 
     return nodes;
   },

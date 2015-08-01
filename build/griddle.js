@@ -965,7 +965,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	      return returnValue || React.createElement('td', { onClick: _this.handleClick, key: index, style: columnStyles });
 	    });
 
-	    nodes.unshift(React.createElement('td', { styles: columnStyles }));
+	    // extra spacer col for the checkbox column.
+	    if (this.props.multipleSelectionSettings.isMultipleSelection) {
+	      nodes.unshift(React.createElement('td', { styles: columnStyles }));
+	    }
 
 	    return nodes;
 	  },
