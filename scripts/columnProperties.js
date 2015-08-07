@@ -91,6 +91,7 @@ var ColumnProperties = (function () {
     },
     getColumns: {
       value: function getColumns() {
+        console.log(this.filteredColumns, this.allColumns);
         //if we didn't set default or filter
         var filteredColumns = this.filteredColumns.length === 0 ? this.allColumns : this.filteredColumns;
 

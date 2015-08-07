@@ -376,6 +376,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.verifyExternal();
 	        this.verifyCustom();
 
+	        console.log('FS', this.props.columns);
+
 	        this.columnSettings = new ColumnProperties(this.props.results.length > 0 ? deep.keys(this.props.results[0]) : [], this.props.columns, this.props.childrenColumnName, this.props.columnMetadata, this.props.metadataColumns);
 
 	        this.rowSettings = new RowProperties(this.props.rowMetadata, this.props.useCustomTableRowComponent && this.props.customTableRowComponent ? this.props.customTableRowComponent : GridRow, this.props.useCustomTableRowComponent);
